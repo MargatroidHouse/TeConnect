@@ -68,6 +68,7 @@ class TeConnect_Widget extends Widget_Abstract_Users
                 $_SESSION['TeConnect_Referer'] = $this->referer;
             }
             //302重定向
+
             $this->response->redirect($sdk->getRequestCodeURL());
         }
     }
@@ -97,20 +98,19 @@ class TeConnect_Widget extends Widget_Abstract_Users
         //仅处理来自绑定界面POST提交的数据，第三方回调会跳过
         if ($this->request->isPost()) {
             $do = $this->request->get('do');
-            if (!in_array($do, array('bind','reg'))) {
+            if (!in_array($do, array('bind', 'reg'))) {
                 throw new Typecho_Widget_Exception("错误数据！");
             }
 
             if (!isset($this->auth['openid']) || !isset($this->auth['type'])) {
                 $this->response->redirect(empty($this->referer) ? $this->options->index : $this->referer);
             }
-            $func = 'doCallback'.ucfirst($do);
+            $func = 'doCallback' . ucfirst($do);
             $this->$func();
             unset($_SESSION['__typecho_auth']);
             unset($_SESSION['__typecho_oauth_user']);
             $this->response->redirect(empty($this->referer) ? $this->options->index : $this->referer);
         }
-
         //第三方登录回调处理
         $options = TeConnect_Plugin::options();
         $oauth_user = array();
@@ -136,11 +136,11 @@ class TeConnect_Widget extends Widget_Abstract_Users
                     'uid'           =>  0,
                     'openid'        =>  $token['openid'],
                     'access_token'  =>  $token['access_token'],
-                    'expires_in'    =>  isset($token['expires_in']) ? $this->options->gmtTime+$token['expires_in']: 0,
+                    'expires_in'    =>  isset($token['expires_in']) ? $this->options->gmtTime + $token['expires_in'] : 0,
                     'gender'        =>  isset($user_info['gender']) ? $user_info['gender'] : 0,
-                    'head_img'      =>  $user_info['head_img'],
-                    'name'          =>  $user_info['name'],
-                    'nickname'      =>  $user_info['nickname'],
+                    'head_img'      =>  isset($user_info['head_img']) ? $user_info['head_img'] : '',
+                    'name'          =>  isset($user_info['name']) ? $user_info['name'] : '',
+                    'nickname'      =>  isset($user_info['nickname']) ? $user_info['nickname'] : '',
                     'type'          =>  $type,
                 );
                 //获取openid
@@ -175,7 +175,7 @@ class TeConnect_Widget extends Widget_Abstract_Users
             $custom = $this->options->plugin('TeConnect')->custom;
             if (!$custom && !empty($this->auth['nickname'])) {
                 $dataStruct = array(
-                    'screenName'=>  $this->auth['nickname'],
+                    'screenName' =>  $this->auth['nickname'],
                     'created'   =>  $this->options->gmtTime,
                     'group'     =>  'subscriber'
                 );
@@ -248,7 +248,7 @@ class TeConnect_Widget extends Widget_Abstract_Users
 
         $dataStruct = array(
             'mail'      =>  $this->request->mail,
-            'screenName'=>  $this->request->screenName,
+            'screenName' =>  $this->request->screenName,
             'created'   =>  $this->options->gmtTime,
             'group'     =>  'subscriber'
         );
@@ -290,13 +290,14 @@ class TeConnect_Widget extends Widget_Abstract_Users
         if (empty($connect)) {
             //未绑定
             $oauthRow = $this->findConnectUser($oauth_user, $type);
+
             if ($oauthRow) {
                 //已存在第三方账号，更新绑定关系
                 $this->db->query($this->db
-                ->update('table.oauth_user')
-                ->rows(array('uid' => $uid))
-                ->where('openid = ?', $oauth_user['openid'])
-                ->where('type = ?', $type));
+                    ->update('table.oauth_user')
+                    ->rows(array('uid' => $uid))
+                    ->where('openid = ?', $oauth_user['openid'])
+                    ->where('type = ?', $type));
             } else {
                 //未绑定，插入数据并绑定
                 $this->db->query($this->db->insert('table.oauth_user')->rows($oauth_user));
@@ -318,14 +319,14 @@ class TeConnect_Widget extends Widget_Abstract_Users
             ->where('openid = ?', $oauth_user['openid'])
             ->where('type = ?', $type)
             ->limit(1));
-        return empty($user)? 0 : $user;
+        return empty($user) ? 0 : $user;
     }
     //使用用户uid登录
     protected function useUidLogin($uid, $expire = 0)
     {
         $authCode = function_exists('openssl_random_pseudo_bytes') ?
-        bin2hex(openssl_random_pseudo_bytes(16)) : sha1(Typecho_Common::randString(20));
-        $user = array('uid'=>$uid,'authCode'=>$authCode);
+            bin2hex(openssl_random_pseudo_bytes(16)) : sha1(Typecho_Common::randString(20));
+        $user = array('uid' => $uid, 'authCode' => $authCode);
 
         Typecho_Cookie::set('__typecho_uid', $uid, $expire);
         Typecho_Cookie::set('__typecho_authCode', Typecho_Common::hash($authCode), $expire);
@@ -349,7 +350,7 @@ class TeConnect_Widget extends Widget_Abstract_Users
             Typecho_Common::error(500);
         }
         /** 输出模板 */
-        require_once (__DIR__ . '/' . $themeFile);
+        require_once(__DIR__ . '/' . $themeFile);
     }
     /**
      * 获取主题文件
@@ -609,6 +610,21 @@ class TeConnect_Widget extends Widget_Abstract_Users
             return $userInfo;
         } else {
             //throw_exception("获取搜狐用户信息失败：{$data['message']}");
+        }
+    }
+
+    //登录成功，获取THB用户信息
+    public function thb($token)
+    {
+        $thb = ThinkOauth::getInstance('thb', $token);
+        $data = $thb->call('resource/profile');
+        if (!empty($data['sub'])) {
+            $userInfo['name'] = $data['username'];
+            $userInfo['nickname'] = $data['realname'];
+            $userInfo['head_img'] = $data['avatar'];
+            return $userInfo;
+        } else {
+            //throw_exception("获取THB用户信息失败：{$data['error']}");
         }
     }
 }

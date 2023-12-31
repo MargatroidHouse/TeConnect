@@ -117,20 +117,20 @@ class TeConnect_Plugin implements Typecho_Plugin_Interface
                   `uuid` int(10) unsigned NOT NULL DEFAULT '0',
                   `type` char(32) NOT NULL,
                   `openid` char(50) NOT NULL,
-                  `access_token` varchar(255) NOT NULL DEFAULT '0' COMMENT '用户对应access_token',
+                  `access_token` varchar(2000) NOT NULL DEFAULT '0' COMMENT '用户对应access_token',
                   `expires_in` int(10) unsigned NOT NULL DEFAULT '0',
                   `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '最后登录',
                   `name` varchar(38) NOT NULL DEFAULT '0',
                   `nickname` varchar(38) NOT NULL DEFAULT '0',
                   `gender` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '性别0未知,1男,2女',
                   `head_img` varchar(255) NOT NULL DEFAULT '0' COMMENT '头像',
-                  `refresh_token` varchar(255) NOT NULL DEFAULT '0' COMMENT '刷新有效期token',
+                  `refresh_token` varchar(2000) NOT NULL DEFAULT '0' COMMENT '刷新有效期token',
                   PRIMARY KEY (`id`),
                   KEY `uuid` (`uuid`),
                   KEY `uid` (`uid`),
                   KEY `type` (`type`),
                   KEY `openid` (`openid`)
-                ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1";
+                ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1";
             $db->query($sql);
         } else {
             throw new Typecho_Plugin_Exception(_t('对不起, 本插件仅支持MySQL数据库。'));

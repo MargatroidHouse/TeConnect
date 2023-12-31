@@ -9,13 +9,6 @@ return array(
         'APP_SECRET'    => '', //应用注册成功后分配的KEY
         'CALLBACK'      => URL_CALLBACK . 'qq',
     ),
-    //腾讯微博配置
-    'THINK_SDK_TENCENT' => array(
-        'NAME'      => '腾讯微博',
-        'APP_KEY'       => '', //应用注册成功后分配的 APP ID
-        'APP_SECRET'    => '', //应用注册成功后分配的KEY
-        'CALLBACK'      => URL_CALLBACK . 'tencent',
-    ),
     //新浪微博配置
     'THINK_SDK_SINA'    => array(
         'NAME'      => '新浪微博',
@@ -106,5 +99,12 @@ return array(
         'APP_KEY'       => '', //应用注册成功后分配的 APP ID
         'APP_SECRET'    => '', //应用注册成功后分配的KEY
         'CALLBACK'      => URL_CALLBACK . 'sohu',
+    ),
+    //THBWiki配置
+    'THINK_SDK_THB'    => array(
+        'NAME'      => 'THBWiki',
+        'APP_KEY'       => '', //应用注册成功后分配的 APP ID
+        'APP_SECRET'    => '', //应用注册成功后分配的KEY
+        'CALLBACK'      => URL_CALLBACK . 'thb',
     ),
 );

@@ -54,11 +54,11 @@
 	<div class="login-wrap">
 		<h3>完善帐号信息</h3>
 		<ul class="tabs">
-			<li><a href="#tab1">绑定新账号</a></li>
+			<!-- <li><a href="#tab1">绑定新账号</a></li> -->
 			<li><a href="#tab2">绑定已有账号</a></li>
 		</ul>
 		<form action="" method="POST">
-			<div class="tabs-panel" id="tab1">
+			<!-- <div class="tabs-panel" id="tab1">
 				<p>
 				<label for="mail" class="required">昵称</label>
 				<input type="text" name="screenName" value="<?php if (isset($this->auth['nickname'])) {
@@ -70,7 +70,7 @@
 				<input type="text" name="mail"  />
 				</p>
 				<p><button name="do" value="reg">确定</button></p>
-			</div>
+			</div> -->
 			<div class="tabs-panel" id="tab2">
 				<p>
 				<label for="mail" class="required">用户名</label>
